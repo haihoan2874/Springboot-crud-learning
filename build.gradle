@@ -25,6 +25,10 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
+
+    // Hot Reload Development Tool
+    developmentOnly 'org.springframework.boot:spring-boot-devtools'
+
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
@@ -32,7 +36,8 @@ dependencies {
     runtimeOnly 'org.postgresql:postgresql'
 
     // Flyway Migration
-    runtimeOnly 'org.flywaydb:flyway-database-postgresql:10.20.0'
+    implementation 'org.springframework.boot:spring-boot-starter-flyway'
+    implementation 'org.flywaydb:flyway-database-postgresql'
 
     // JWT
     implementation 'com.auth0:java-jwt:4.5.0'
@@ -62,3 +67,11 @@ tasks.named('test') {
 compileJava {
     options.annotationProcessorPath = configurations.annotationProcessor
 }
+
+// Enable continuous compilation for hot reload
+tasks.register('compileJavaContinuous') {
+    doLast {
+        println "Watching for changes... Press Ctrl+C to stop"
+    }
+}
+

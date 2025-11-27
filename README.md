@@ -1,108 +1,95 @@
 # Spring Boot Boilerplate
 
-A production-ready Spring Boot application with JWT authentication, PostgreSQL, Redis, and Docker support.
+A production-ready Spring Boot 4.0.0 application with JWT authentication, PostgreSQL 16, Flyway migrations, and hot reload support.
 
 ## Overview
 
-- **Framework**: Spring Boot 4.0.0 with Spring Security
+- **Framework**: Spring Boot 4.0.0 with Spring Security 6.5
 - **Authentication**: JWT token-based (60-minute expiration)
-- **Database**: PostgreSQL 16 with Hibernate ORM
-- **Cache**: Redis 7
-- **API Documentation**: Swagger/OpenAPI 3.0
-- **Container**: Docker & Docker Compose (8 services)
-- **Java**: Version 21
+- **Database**: PostgreSQL 16 with Hibernate ORM & Flyway migrations
+- **Hot Reload**: Spring Boot DevTools with Gradle continuous build
+- **API Documentation**: OpenAPI 3.0 with Swagger UI
+- **Container**: Docker & Docker Compose
+- **Java**: Version 21 (LTS)
 
 ## Features
 
 ✅ User Registration & Login with JWT  
-✅ Password Hashing (BCrypt - Strength 12)  
+✅ Password Hashing (BCrypt)  
 ✅ Role-Based Access Control (ROLE_USER, ROLE_ADMIN)  
 ✅ Global Exception Handling & Input Validation  
 ✅ Health Check Endpoints (no auth required)  
-✅ PostgreSQL Integration with Hibernate  
-✅ Redis Caching & Session Management  
-✅ Mailhog Email Testing  
-✅ LocalStack AWS Services (S3, SQS, SNS, DynamoDB)  
-✅ Swagger/OpenAPI Documentation  
+✅ PostgreSQL with Flyway schema migrations  
+✅ Hot Reload Development (Spring Boot DevTools)  
+✅ MapStruct type-safe DTO mapping  
+✅ Swagger/OpenAPI documentation  
 ✅ Environment Configuration via .env  
 
 ## Project Structure
 
 ```
-project-root/
+springboot-boilerplate/
 ├── src/main/java/com/conglt/learning/springbootboilerplate/
-│   ├── configuration/          # Spring configs (Security, JWT, Swagger)
-│   ├── controller/             # REST controllers (Login, Register, Health)
-│   ├── model/                  # JPA entities (User, UserRole)
-│   ├── repository/             # JPA repositories
-│   ├── security/               # JWT & authentication
-│   │   ├── dto/               # Request/Response DTOs
-│   │   ├── jwt/               # JWT token provider & filter
-│   │   ├── mapper/            # MapStruct mappers
-│   │   └── service/           # Business logic
-│   └── exceptions/             # Global exception handlers
+│   ├── configuration/              # Spring Security, Password Encoder, Swagger
+│   ├── controller/                 # REST endpoints (Health, Hello, Login, Register)
+│   ├── model/                      # JPA entities (User, UserRole)
+│   ├── repository/                 # JPA repositories
+│   ├── security/                   # JWT & authentication
+│   │   ├── dto/                   # Request/Response DTOs
+│   │   ├── jwt/                   # JWT token provider & filter
+│   │   ├── mapper/                # MapStruct mappers
+│   │   └── service/               # Business logic (UserService)
+│   ├── exceptions/                 # Global exception handlers
+│   └── SpringbootBoilerplateApplication.java
+│
 ├── src/main/resources/
-│   ├── application.properties   # Server config (uses env variables)
-│   └── messages/              # i18n messages
-├── Dockerfile                  # Multi-stage Docker build
-├── docker-compose.yml          # 8 services (App, DB, Redis, etc.)
-├── .env                        # Environment variables
+│   ├── application.properties       # Configuration
+│   └── db/migration/               # Flyway SQL migrations
+│       ├── V1.0__Create_users_table.sql
+│       ├── V1.1__Create_audit_log_table.sql
+│       └── V1.2__Create_postgresql_extensions.sql
+│
+├── build.gradle                    # Gradle dependencies (Spring Boot DevTools)
+├── docker-compose.yml              # PostgreSQL service
+├── .env                            # Environment variables
 └── scripts/
-    ├── init-db.sql            # PostgreSQL initialization
-    └── localstack-init.sh     # AWS services setup
+    └── init-db.sql                 # Database initialization
 ```
 
 ## Quick Start
 
 ### Prerequisites
 - Docker & Docker Compose installed
-- Or: Java 21, PostgreSQL 16, Redis 7 (for local development)
+- Or: Java 21, PostgreSQL 16 (for local development)
 
-### Step 1: Setup Environment
+### Step 1: Start PostgreSQL
 ```bash
-cd /home/lam.tuan.cong@sun-asterisk.com/learns/java/springboot-boilerplate
-cp .env.example .env
+docker-compose up -d postgres
 ```
 
-Customize `.env` if needed (default values work for Docker):
-```properties
-PORT=8080
-POSTGRES_PASSWORD=postgres
-JWT_SECRETKEY=your-secret-key
+### Step 2: Build & Run Application
+
+**With Hot Reload (Development):**
+```bash
+./gradlew bootRun -t
 ```
 
-### Step 2: Build & Start Services
-
-**Using Docker Compose (Recommended):**
+**Regular Run:**
 ```bash
-docker-compose up -d
-```
-
-**Using Make:**
-```bash
-make docker-up
-```
-
-**Check Status:**
-```bash
-docker-compose ps
+./gradlew bootRun
 ```
 
 ### Step 3: Verify & Access
 
 **Health Check:**
 ```bash
-curl http://localhost:8080/api/health/ping
+curl http://localhost:8089/health
 ```
 
-**Access Applications:**
-| Service | URL | Credentials |
-|---------|-----|-------------|
-| API | http://localhost:8080 | - |
-| Swagger UI | http://localhost:8080/swagger-ui.html | - |
-| pgAdmin | http://localhost:5050 | admin@example.com / admin |
-| Redis Commander | http://localhost:8081 | - |
-| Mailhog | http://localhost:8025 | - |
+**Swagger UI:**
+```
+http://localhost:8089/swagger-ui.html
+```
 
 ## Build from Source
 
@@ -110,46 +97,43 @@ curl http://localhost:8080/api/health/ping
 ```bash
 java -version          # Java 21+
 gradle -version        # Gradle 9.2.1+
-docker -version        # Docker 20.10+
+docker -version        # Docker 20.10+ (for PostgreSQL)
 ```
 
 ### Build Steps
 
-**1. Clean & Build:**
+**1. Build Project:**
 ```bash
 ./gradlew clean build -x test
 ```
 
-**2. Build Docker Image:**
+**2. Start PostgreSQL:**
 ```bash
-docker-compose build
+docker-compose up -d postgres
 ```
 
-**3. Start All Services:**
+**3. Run with Hot Reload:**
 ```bash
-docker-compose up -d
+./gradlew bootRun -t
 ```
 
-**4. Wait for Services (10-15 seconds):**
+**4. Test API:**
 ```bash
-docker-compose logs -f app
-# Wait for: "Tomcat started on port(s): 8080"
-```
+# Health check
+curl http://localhost:8089/health
 
-**5. Test API:**
-```bash
 # Register
-curl -X POST http://localhost:8080/register \
+curl -X POST http://localhost:8089/register \
   -H "Content-Type: application/json" \
-  -d '{"username":"testuser","email":"test@example.com","password":"Test@1234"}'
+  -d '{"username":"testuser","email":"test@example.com","password":"Test@1234","firstName":"Test","lastName":"User"}'
 
-# Login (get JWT token)
-curl -X POST http://localhost:8080/login \
+# Login
+curl -X POST http://localhost:8089/login \
   -H "Content-Type: application/json" \
   -d '{"username":"testuser","password":"Test@1234"}'
 
-# Access protected endpoint
-curl -X GET http://localhost:8080/hello \
+# Protected endpoint (use JWT token from login)
+curl -X GET http://localhost:8089/hello \
   -H "Authorization: Bearer <JWT_TOKEN>"
 ```
 
@@ -158,11 +142,9 @@ curl -X GET http://localhost:8080/hello \
 ### Public (No Authentication)
 | Method | Path | Description |
 |--------|------|-------------|
+| GET | `/health` | Health check status |
 | POST | `/register` | Register new user |
 | POST | `/login` | Login & get JWT token |
-| GET | `/api/health` | Health status |
-| GET | `/api/health/ping` | Simple ping |
-| GET | `/api/health/detailed` | Detailed health info |
 
 ### Protected (JWT Required)
 | Method | Path | Description |
@@ -174,60 +156,62 @@ curl -X GET http://localhost:8080/hello \
 |------|-------------|
 | `/swagger-ui.html` | Interactive API docs |
 | `/v3/api-docs` | OpenAPI JSON spec |
-| `/actuator/health` | Application health |
+| `/actuator/health` | Actuator health endpoint |
 
-## Management Commands
+## Docker Compose
 
-### Using Make
 ```bash
-make help                 # Show all commands
-make docker-up           # Start services
-make docker-down         # Stop services
-make docker-logs-app     # View app logs
-make docker-health       # Check health
-make docker-db-connect   # Connect to PostgreSQL
-make docker-redis        # Connect to Redis
-```
-
-### Using Docker Compose
-```bash
-docker-compose up -d                           # Start
-docker-compose down                            # Stop
-docker-compose logs -f app                     # Logs
-docker-compose ps                              # Status
-docker-compose exec postgres psql -U postgres  # DB shell
+docker-compose up -d postgres              # Start PostgreSQL
+docker-compose down                        # Stop all services
+docker-compose logs -f postgres            # View logs
+docker-compose ps                          # Service status
 ```
 
 ## Configuration
 
+### Environment Variables (.env)
+```properties
+SPRING_PROFILE=local
+PORT=8089
+POSTGRES_HOST=localhost
+POSTGRES_PORT=5432
+POSTGRES_DB=springboot_boilerplate
+POSTGRES_USER=pguser
+POSTGRES_PASSWORD=pgpassword
+DB_SCHEMA=public
+JWT_SECRETKEY=your-secret-key
+JWT_ISSUER=springboot-boilerplate
+JWT_EXPIRATIONMINUTE=60
+```
+
 ### Application Properties
 Uses environment variables from `.env`:
 ```properties
-# Database
+server.port=${PORT:8089}
 spring.datasource.url=jdbc:postgresql://${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}
-
-# JWT
+spring.datasource.username=${POSTGRES_USER}
+spring.datasource.password=${POSTGRES_PASSWORD}
+spring.flyway.enabled=true
 jwt.secretKey=${JWT_SECRETKEY}
-
-# Logging
-logging.level.root=${LOGGING_LEVEL_ROOT}
 ```
 
 ## Technology Stack
 
-**Backend**: Spring Boot 4.0.0, Spring Security, Spring Data JPA  
-**Database**: PostgreSQL 16, Hibernate ORM  
-**Cache**: Redis 7  
-**Security**: JWT (Auth0), BCrypt  
-**API**: OpenAPI 3.0, Swagger UI  
-**Tools**: Docker, Gradle, Makefile  
+**Backend**: Spring Boot 4.0.0, Spring Security 6.5, Spring Data JPA  
+**Database**: PostgreSQL 16, Hibernate ORM, Flyway migrations  
+**Security**: JWT (Auth0), BCrypt password hashing  
+**API**: OpenAPI 3.0, Swagger UI, Spring Doc  
+**Mapping**: MapStruct (type-safe DTO conversion)  
+**Logging**: Logback, SLF4J  
+**Build**: Gradle 9.2.1, Spring Boot DevTools  
+**Container**: Docker, Docker Compose  
+**Java**: Version 21 LTS  
 
 ## Troubleshooting
 
 ### Port already in use
 ```bash
-lsof -i :8080
-kill -9 <PID>
+lsof -ti :8089 | xargs kill -9
 ```
 
 ### Database connection failed
@@ -236,11 +220,19 @@ docker-compose restart postgres
 docker-compose logs postgres
 ```
 
-### Application won't start
+### Hot reload not working
 ```bash
-docker-compose logs app
-docker-compose down -v
-docker-compose up -d
+# Use Gradle continuous build flag:
+./gradlew bootRun -t
+
+# This enables auto-compilation and auto-restart
+```
+
+### Flyway migrations failed
+```bash
+docker-compose logs postgres
+# Check if PostgreSQL is healthy
+docker-compose ps postgres
 ```
 
 ---
@@ -248,5 +240,5 @@ docker-compose up -d
 **Version**: 1.0.0 | **Java**: 21 | **Spring Boot**: 4.0.0  
 **Status**: ✅ Production Ready
 
-Quick Start: `docker-compose up -d` → http://localhost:8080/swagger-ui.html
+Quick Start: `docker-compose up -d postgres` → `./gradlew bootRun -t` → http://localhost:8089/swagger-ui.html
 
