@@ -25,7 +25,7 @@ A production-ready Spring Boot 4.0.0 application with JWT authentication, Postgr
 ✅ Swagger/OpenAPI documentation  
 ✅ Environment Configuration via .env  
 
-## Project Structure
+## Project Structure (Initial Setup)
 
 ```
 springboot-boilerplate/
@@ -62,12 +62,17 @@ springboot-boilerplate/
 - Docker & Docker Compose installed
 - Or: Java 21, PostgreSQL 16 (for local development)
 
-### Step 1: Start PostgreSQL
+### Step 1: Create .env File
+```bash
+cp .env.example .env
+```
+
+### Step 2: Start PostgreSQL
 ```bash
 docker-compose up -d postgres
 ```
 
-### Step 2: Build & Run Application
+### Step 3: Build & Run Application
 
 **With Hot Reload (Development):**
 ```bash
@@ -79,7 +84,7 @@ docker-compose up -d postgres
 ./gradlew bootRun
 ```
 
-### Step 3: Verify & Access
+### Step 4: Verify & Access
 
 **Health Check:**
 ```bash
@@ -136,105 +141,6 @@ curl -X POST http://localhost:8089/login \
 curl -X GET http://localhost:8089/hello \
   -H "Authorization: Bearer <JWT_TOKEN>"
 ```
-
-## API Endpoints
-
-### Public (No Authentication)
-| Method | Path | Description |
-|--------|------|-------------|
-| GET | `/health` | Health check status |
-| POST | `/register` | Register new user |
-| POST | `/login` | Login & get JWT token |
-
-### Protected (JWT Required)
-| Method | Path | Description |
-|--------|------|-------------|
-| GET | `/hello` | Test protected endpoint |
-
-### Documentation
-| Path | Description |
-|------|-------------|
-| `/swagger-ui.html` | Interactive API docs |
-| `/v3/api-docs` | OpenAPI JSON spec |
-| `/actuator/health` | Actuator health endpoint |
-
-## Docker Compose
-
-```bash
-docker-compose up -d postgres              # Start PostgreSQL
-docker-compose down                        # Stop all services
-docker-compose logs -f postgres            # View logs
-docker-compose ps                          # Service status
-```
-
-## Configuration
-
-### Environment Variables (.env)
-```properties
-SPRING_PROFILE=local
-PORT=8089
-POSTGRES_HOST=localhost
-POSTGRES_PORT=5432
-POSTGRES_DB=springboot_boilerplate
-POSTGRES_USER=pguser
-POSTGRES_PASSWORD=pgpassword
-DB_SCHEMA=public
-JWT_SECRETKEY=your-secret-key
-JWT_ISSUER=springboot-boilerplate
-JWT_EXPIRATIONMINUTE=60
-```
-
-### Application Properties
-Uses environment variables from `.env`:
-```properties
-server.port=${PORT:8089}
-spring.datasource.url=jdbc:postgresql://${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}
-spring.datasource.username=${POSTGRES_USER}
-spring.datasource.password=${POSTGRES_PASSWORD}
-spring.flyway.enabled=true
-jwt.secretKey=${JWT_SECRETKEY}
-```
-
-## Technology Stack
-
-**Backend**: Spring Boot 4.0.0, Spring Security 6.5, Spring Data JPA  
-**Database**: PostgreSQL 16, Hibernate ORM, Flyway migrations  
-**Security**: JWT (Auth0), BCrypt password hashing  
-**API**: OpenAPI 3.0, Swagger UI, Spring Doc  
-**Mapping**: MapStruct (type-safe DTO conversion)  
-**Logging**: Logback, SLF4J  
-**Build**: Gradle 9.2.1, Spring Boot DevTools  
-**Container**: Docker, Docker Compose  
-**Java**: Version 21 LTS  
-
-## Troubleshooting
-
-### Port already in use
-```bash
-lsof -ti :8089 | xargs kill -9
-```
-
-### Database connection failed
-```bash
-docker-compose restart postgres
-docker-compose logs postgres
-```
-
-### Hot reload not working
-```bash
-# Use Gradle continuous build flag:
-./gradlew bootRun -t
-
-# This enables auto-compilation and auto-restart
-```
-
-### Flyway migrations failed
-```bash
-docker-compose logs postgres
-# Check if PostgreSQL is healthy
-docker-compose ps postgres
-```
-
 ---
 
 **Version**: 1.0.0 | **Java**: 21 | **Spring Boot**: 4.0.0  
