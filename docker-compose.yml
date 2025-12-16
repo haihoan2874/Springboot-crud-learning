@@ -4,11 +4,11 @@ services:
   # PostgreSQL Database
   postgres:
     image: postgres:16-alpine
-    container_name: springboot-postgres
+    container_name: springboot-crud-postgres
     environment:
-      POSTGRES_DB: springboot_boilerplate
-      POSTGRES_USER: pguser
-      POSTGRES_PASSWORD: pgpassword
+      POSTGRES_DB: springboot_crud
+      POSTGRES_USER: haihoan
+      POSTGRES_PASSWORD: trinhhaihoan
       POSTGRES_INITDB_ARGS: "-c max_connections=200 -c shared_buffers=256MB"
     ports:
       - "5432:5432"
