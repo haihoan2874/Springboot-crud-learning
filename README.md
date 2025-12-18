@@ -44,7 +44,7 @@ A production-ready Spring Boot 4.0.0 application for managing inventory, categor
 ## 📂 Project Structure
 
 ```
-SpringBoot_CRUD/
+InventoryManagementSystem/
 ├── src/main/java/com/conglt/learning/springbootboilerplate/
 │   ├── SpringbootBoilerplateApplication.java    # Main application class
 │   ├── configuration/                           # Spring configurations
@@ -152,8 +152,8 @@ SpringBoot_CRUD/
 ### Step 1: Clone & Setup Environment
 ```bash
 # Clone the repository
-git clone <repository-url>
-cd SpringBoot_CRUD
+git clone https://github.com/haihoan2874/InventoryManagementSystem.git
+cd InventoryManagementSystem
 
 # Create .env file (if not exists)
 cp .env.example .env
