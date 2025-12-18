@@ -1,5 +1,6 @@
 package com.conglt.learning.springbootboilerplate.configuration;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.ResourceBundleMessageSource;
@@ -17,6 +18,11 @@ public class MessageConfiguration {
         messageSource.setDefaultEncoding("UTF-8");
         messageSource.setFallbackToSystemLocale(true);
         return messageSource;
+    }
+
+    @Bean
+    public ObjectMapper objectMapper() {
+        return new ObjectMapper();
     }
 }
 

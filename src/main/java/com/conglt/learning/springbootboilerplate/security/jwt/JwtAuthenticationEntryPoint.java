@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -21,10 +22,15 @@ import java.util.Map;
 @Slf4j
 @Component
 public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
+    private final ObjectMapper objectMapper;
+
+    public JwtAuthenticationEntryPoint(ObjectMapper objectMapper) {
+        this.objectMapper = objectMapper;
+    }
 
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response,
-                        AuthenticationException authException) throws IOException, ServletException {
+                         AuthenticationException authException) throws IOException, ServletException {
         log.error("Responding with unauthorized error. Message: {}", authException.getMessage());
 
         response.setContentType("application/json");
@@ -36,8 +42,10 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
         body.put("message", "Unauthorized: " + authException.getMessage());
         body.put("path", request.getServletPath());
 
-        ObjectMapper objectMapper = new ObjectMapper();
-        response.getWriter().write(objectMapper.writeValueAsString(body));
+//      i  ObjectMapper objectMapper = new ObjectMapper();
+//        response.getWriter().write(objectMapper.writeValueAsString(body));
+
+        objectMapper.writeValue(response.getOutputStream(), body);
     }
 }
 

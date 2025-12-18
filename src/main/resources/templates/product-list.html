@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Danh sách sản phẩm</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 p-8">
+
+<div class="max-w-6xl mx-auto">
+
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-3xl font-bold text-gray-800 flex items-center gap-2">
+            <i class="fas fa-cubes text-blue-600"></i> Quản Lý Kho Hàng
+        </h1>
+        <a th:href="@{/products/new}"
+           class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg shadow transition duration-300 flex items-center gap-2">
+            <i class="fas fa-plus"></i> Thêm sản phẩm
+        </a>
+    </div>
+
+    <div class="bg-white rounded-xl shadow-md overflow-hidden border border-gray-200">
+        <table class="w-full text-left border-collapse">
+            <thead class="bg-gray-800 text-white">
+            <tr>
+                <th class="py-4 px-6 font-semibold text-sm uppercase tracking-wider text-center w-20">ID</th>
+                <th class="py-4 px-6 font-semibold text-sm uppercase tracking-wider">Sản phẩm</th>
+                <th class="py-4 px-6 font-semibold text-sm uppercase tracking-wider">Giá (VNĐ)</th>
+                <th class="py-4 px-6 font-semibold text-sm uppercase tracking-wider">Danh mục</th>
+                <th class="py-4 px-6 font-semibold text-sm uppercase tracking-wider text-center">Tồn kho</th>
+                <th class="py-4 px-6 font-semibold text-sm uppercase tracking-wider text-center">Hành động</th>
+            </tr>
+            </thead>
+            <tbody class="text-gray-700">
+
+            <tr th:each="product : ${productList}"
+                class="border-b border-gray-100 hover:bg-blue-50 transition duration-150">
+                <td class="py-4 px-6 text-center font-bold text-gray-500" th:text="${product.id}">1</td>
+
+                <td class="py-4 px-6">
+                    <div class="flex items-center gap-3">
+                        <div class="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-500 font-bold">
+                            <span th:text="${#strings.substring(product.name, 0, 1)}">P</span>
+                        </div>
+                        <span class="font-medium text-gray-900" th:text="${product.name}">Iphone 15</span>
+                    </div>
+                </td>
+
+                <td class="py-4 px-6 font-semibold text-green-600"
+                    th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT')} + ' đ'">
+                    20.000.000 đ
+                </td>
+
+                <td class="py-4 px-6">
+                            <span class="bg-purple-100 text-purple-700 py-1 px-3 rounded-full text-xs font-bold uppercase tracking-wide"
+                                  th:text="${product.category != null ? product.category.name : 'N/A'}">
+                                Laptop
+                            </span>
+                </td>
+
+                <td class="py-4 px-6 text-center">
+                            <span th:class="${product.stock > 0} ? 'text-blue-600 font-bold' : 'text-red-500 font-bold'"
+                                  th:text="${product.stock}">
+                                10
+                            </span>
+                </td>
+
+                <td class="py-3 px-6 text-center">
+                    <div class="flex item-center justify-center">
+                        <a th:href="@{/products/edit/{id}(id=${product.id})}"
+                           class="w-4 mr-2 transform hover:text-purple-500 hover:scale-110">
+                            <i class="fas fa-edit"></i>
+                        </a>
+
+                        <a th:href="@{/products/delete/{id}(id=${product.id})}"
+                           class="w-4 mr-2 transform hover:text-red-500 hover:scale-110"
+                           onclick="return confirm('Bạn có chắc chắn muốn xóa không?')">
+                            <i class="fas fa-trash-alt"></i>
+                        </a>
+                    </div>
+                </td>
+            </tr>
+
+            <tr th:if="${#lists.isEmpty(productList)}">
+                <td colspan="6" class="text-center py-10">
+                    <div class="flex flex-col items-center text-gray-400">
+                        <i class="fas fa-box-open text-6xl mb-3"></i>
+                        <p class="text-lg">Chưa có sản phẩm nào trong kho</p>
+                    </div>
+                </td>
+            </tr>
+
+            </tbody>
+        </table>
+    </div>
+
+    <div class="mt-4 text-center text-gray-400 text-sm">
+        &copy; 2025 Inventory System by HoànDev
+    </div>
+</div>
+
+</body>
+</html>

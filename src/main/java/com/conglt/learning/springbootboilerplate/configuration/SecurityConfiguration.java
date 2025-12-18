@@ -36,24 +36,31 @@ public class SecurityConfiguration {
                 .csrf(csrf -> csrf.disable())
                 .cors(cors -> cors.disable())
                 .exceptionHandling(exceptionHandling ->
-                    exceptionHandling.authenticationEntryPoint(jwtAuthenticationEntryPoint)
+                        exceptionHandling.authenticationEntryPoint(jwtAuthenticationEntryPoint)
                 )
                 .sessionManagement(sessionManagement ->
-                    sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                        sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
                 .authorizeHttpRequests(authorizeRequests ->
-                    authorizeRequests
-                        .requestMatchers(
-                            "/register",
-                            "/login",
-                            "/health",
-                            "/api/hello/**",
-                            "/v3/api-docs/**",
-                            "/swagger-ui/**",
-                            "/swagger-ui.html",
-                            "/actuator/**"
-                        ).permitAll()
-                        .anyRequest().authenticated()
+                        authorizeRequests
+                                .requestMatchers(
+                                        "/register",
+                                        "/login",
+                                        "/health",
+                                        "/api/hello/**",
+                                        "/v3/api-docs/**",
+                                        "/swagger-ui/**",
+                                        "/swagger-ui.html",
+                                        "/actuator/**",
+                                        "/api/products/**",
+                                        "/api/categories/**",
+
+                                        "/products",
+                                        "/products/**",
+                                        "/error",
+                                        "/webjars/**"
+                                ).permitAll()
+                                .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
 
